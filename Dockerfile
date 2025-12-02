@@ -1,35 +1,45 @@
-FROM debian:stable
+FROM ubuntu:22.04
 
-# Atualiza sistema
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Atualiza e instala dependências
 RUN apt-get update && apt-get install -y \
-    wget git curl nano \
-    xvfb x11vnc fluxbox \
-    novnc websockify \
+    wget \
+    curl \
+    git \
+    nodejs \
+    npm \
+    xvfb \
+    x11vnc \
+    fluxbox \
+    novnc \
+    websockify \
+    python3 \
     xdg-utils \
-    libgtk-3-0 libx11-xcb1 libnss3 libasound2 \
-    libgbm1 libxshmfence1 libatk1.0-0 libatk-bridge2.0-0 \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get clean
 
-# Instalar Node.js LTS
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs
+# Instala noVNC e websockify
+RUN mkdir -p /opt/novnc && \
+    cp -r /usr/share/novnc/* /opt/novnc/ && \
+    ln -s /opt/novnc/vnc.html /opt/novnc/index.html
 
-# Copia seu código Electron
+# Diretório da aplicação
 WORKDIR /app
-COPY . /app
 
-# Instala dependências do Electron
-RUN npm install
+COPY package*.json ./
+RUN npm install || true
 
-# Porta do noVNC
+COPY . .
+
+# Expõe a porta do noVNC
 EXPOSE 8080
 
-# Script de inicialização
+# Comando principal
 CMD bash -c "\
     Xvfb :1 -screen 0 1280x900x24 & \
     export DISPLAY=:1 && \
     fluxbox & \
-    websockify --web=/usr/share/novnc/ 8080 localhost:5900 & \
-    x11vnc -forever -usepw -create & \
+    x11vnc -forever -nopw -display :1 -rfbport 5900 & \
+    websockify --web=/opt/novnc 8080 localhost:5900 & \
     npm start \
 "
