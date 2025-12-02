@@ -1,5 +1,5 @@
 {
-  "name": "navegador-fandi",
+  "name": "browser-fandi",
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
@@ -7,6 +7,6 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "electron": "^30.0.0"
+    "electron": "^29.1.0"
   }
 }
