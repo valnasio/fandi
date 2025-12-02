@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  navegador-fandi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: navegador-fandi
+    ports:
+      - "8998:8080"   # host:container -> host usa 8998, container expõe 8080
+    restart: unless-stopped
+    environment:
+      - DISPLAY=:1
+    volumes:
+      - ./sessao:/root/.config # opcional: persiste sessão/cookies do Electron

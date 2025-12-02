@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Navegador Interno - Fandi</title>
+    <style>
+        body, html {
+            margin: 0; padding: 0;
+            height: 100%;
+            font-family: Arial;
+        }
+        #topBar {
+            height: 40px;
+            background: #222;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+        }
+        #browserFrame {
+            width: 100%;
+            height: calc(100% - 40px);
+            border: none;
+        }
+        #btnLimpar {
+            background: #d33;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        #btnLimpar:hover {
+            background: #b00;
+        }
+    </style>
+</head>
+<body>
+
+<div id="topBar">
+    <div>Navegador Fandi</div>
+    <button id="btnLimpar" onclick="clearSession()">Limpar Sessão</button>
+</div>
+
+<iframe id="browserFrame" src="https://app10.fandi.com.br/login"></iframe>
+
+<script>
+    function clearSession() {
+        // limpa localStorage
+        localStorage.clear();
+        sessionStorage.clear();
+
+        // limpa cookies do seu domínio (os do iframe não podem ser limpos daqui)
+        document.cookie.split(";").forEach(function(c) {
+            document.cookie = c.replace(/^ +/, "")
+                .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
+
+        // recarrega o site no iframe
+        document.getElementById("browserFrame").src = "https://app10.fandi.com.br/login";
+
+        alert("Sessão local limpa!");
+    }
+</script>
+
+</body>
+</html>
